@@ -1,0 +1,5 @@
+- name: provsioning server
+  become: yes
+  hosts: all
+  roles:
+      - base
