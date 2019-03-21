@@ -42,7 +42,7 @@ resource "aws_security_group" "allow_ssh" {
 resource "aws_key_pair" "keypair" {
    key_name = "keypair"
    #public_key = "${file("webserver.pub")}"
-   public_key = "${file(var.ssh_key_public)}"
+   public_key = "${file(var.webserver_ssh_key_public)}"
 }
 
 resource "aws_instance" "web" {
@@ -57,18 +57,26 @@ resource "aws_instance" "web" {
   "allow_tls"
   ]
 
+}
+
+resource "null_resource" "provisioner" {
+  triggers {
+    public_ip = "${aws_instance.web.public_ip}"
+  }
+
   provisioner "remote-exec" {
   inline = [
       "ls"
     ]
   connection {
+    host        = "${aws_instance.web.public_ip}"
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file(var.ssh_key_private)}"
+    private_key = "${file(var.webserver_ssh_key_private)}"
    }
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i '${self.public_ip},' --private-key ${var.ssh_key_private} ./ansible/provision.yml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u  ubuntu --private-key ${var.webserver_ssh_key_private} -i '${aws_instance.web.public_ip},' ./ansible/provision.yml"
   }
 }
