@@ -1,9 +1,9 @@
-- name: Installing haproxy
+- name: installing haproxy
   become: yes
   apt:
     name: haproxy
     state: present
-- name: Set up haproxy conf file
+- name: setting up haproxy conf file
   template:
     src=haproxy.conf.tbl
     dest=/etc/haproxy/haproxy.conf

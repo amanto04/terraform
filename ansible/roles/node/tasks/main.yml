@@ -1,4 +1,4 @@
-- name: Install npm and node
+- name: installing npm and node
   apt:
     name: "{{ item }}"
     update_cache: yes

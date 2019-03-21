@@ -1,42 +1,16 @@
 
-- name: Ensure base group
+- name: ensure base group
   group:
     name: "{{ base_group }}"
     state: present
 
-- name: Ensure base user
+- name: ensure base user
   user:
     name: "{{ base_user }}"
     group: "{{ base_group }}"
     state: present
 
-- name: Ensure ajoeph group
-  group:
-    name: ajoseph
-    state: present
-
-- name: Make sure we have a 'ajoseph' user
-  user:
-    name: ajoseph
-    state: present
-    group: ajoseph
-    groups: "{{ base_group }}"
-    append: yes
-
-- name: Make sure we have a 'ajoseph' group
-  group:
-    name: ajoseph
-    state: present
-
-- name: Allow 'ajoseph' group to have passwordless sudo
-  lineinfile:
-    dest: /etc/sudoers
-    state: present
-    regexp: '^%ajoseph'
-    line: '%ajoseph ALL=(ALL) NOPASSWD: ALL'
-    validate: 'visudo -cf %s'
-
-- name: Ensure /var/www directory has correct permissions.
+- name: ensure /var/www directory and has correct permissions.
   file:
     path: /var/www
     state: directory
@@ -45,7 +19,7 @@
 
 - name: copying nodejs application with required access
   copy:
-    src: /Users/iicuh/personnel/repos/node
+    src: /Users/"{{ home }}"/personnel/repos/node
     dest: /var/www
     owner: "{{ base_user}}"
     group: "{{ base_group }}"
